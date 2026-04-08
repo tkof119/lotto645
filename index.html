@@ -3,49 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>로또645 - 노론리 한량</title>
+    <title>노론한량645 - AI 분석기</title>
     
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#1a1a1b">
+    <meta name="theme-color" content="#ffffff">
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
 
     <style>
-        /* (이전과 동일한 디자인 코드 생략 - 노론리 한량 에디션 디자인 유지) */
-        :root { --main-gold: #f1c40f; --dark-bg: #1a1a1b; --card-bg: #2d2d2e; }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--dark-bg); color: #fff; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .header { width: 100%; padding: 50px 0 30px; text-align: center; background: linear-gradient(to bottom, #2d2d2e, var(--dark-bg)); border-bottom: 1px solid #333; }
-        .app-icon { width: 75px; height: 75px; background: var(--main-gold); border-radius: 20px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; color: #000; box-shadow: 0 10px 20px rgba(241, 196, 15, 0.2); }
-        h1 { font-size: 26px; margin: 0; color: var(--main-gold); letter-spacing: 1px; }
-        .creator-tag { display: inline-block; margin-top: 8px; padding: 4px 12px; background: rgba(241, 196, 15, 0.1); border-radius: 20px; font-size: 13px; color: var(--main-gold); border: 1px solid rgba(241, 196, 15, 0.3); }
-        .status-panel { width: 90%; background: var(--card-bg); border-radius: 18px; padding: 15px; margin-top: -20px; display: flex; justify-content: space-around; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .status-item { text-align: center; }
-        .status-item span { display: block; font-size: 10px; color: #aaa; margin-bottom: 3px; }
-        .status-item b { font-size: 14px; color: #fff; }
-        .btn-main { width: 90%; padding: 20px; background: var(--main-gold); border: none; border-radius: 18px; color: #000; font-size: 18px; font-weight: 800; margin: 30px 0; cursor: pointer; box-shadow: 0 5px 20px rgba(241, 196, 15, 0.3); }
-        .results { width: 90%; padding-bottom: 50px; }
-        .lotto-card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 20px; animation: slideUp 0.5s ease forwards; border-left: 5px solid var(--main-gold); }
-        .balls { display: flex; justify-content: space-between; margin: 15px 0; }
-        .ball { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3); }
-        .n1 { background: #fbc400; color: #000; } .n11 { background: #69c8f2; } .n21 { background: #ff7272; } .n31 { background: #aaa; } .n41 { background: #b0d840; }
-        .analysis-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; margin-top: 10px; font-size: 12px; line-height: 1.6; color: #ddd; }
-        .analysis-box b { color: var(--main-gold); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        :root {
+            --primary-gold: #c5a059;
+            --bright-bg: #fdfdfd;
+            --glass-card: rgba(255, 255, 255, 0.9);
+            --accent-color: #3498db;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 화려한 화이트-골드 헤더 */
+        .header {
+            width: 100%;
+            padding: 50px 0 30px;
+            text-align: center;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-bottom: 2px solid var(--primary-gold);
+        }
+
+        .app-icon-frame {
+            width: 85px; height: 85px;
+            background: linear-gradient(135deg, #fff, #f1c40f);
+            border-radius: 22px;
+            margin: 0 auto 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 900; color: #b8860b;
+            box-shadow: 0 10px 25px rgba(184, 134, 11, 0.2);
+            border: 2px solid #fff;
+        }
+
+        h1 { font-size: 26px; margin: 0; color: #b8860b; letter-spacing: 1px; }
+        
+        /* 만든이 표기: 메인페이지 상단만 노출 */
+        .creator-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 15px;
+            background: #b8860b;
+            color: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(184, 134, 11, 0.3);
+        }
+
+        .status-panel {
+            width: 90%;
+            background: var(--glass-card);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: -20px;
+            display: flex; justify-content: space-around;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .status-item span { display: block; font-size: 11px; color: #7f8c8d; margin-bottom: 4px; }
+        .status-item b { font-size: 15px; color: #2c3e50; }
+
+        .btn-extract {
+            width: 90%; padding: 20px;
+            background: linear-gradient(to right, #b8860b, #f1c40f);
+            border: none; border-radius: 18px;
+            color: white; font-size: 18px; font-weight: 800;
+            margin: 30px 0; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(184, 134, 11, 0.3);
+            transition: 0.3s;
+        }
+        .btn-extract:active { transform: scale(0.96); }
+
+        .results { width: 90%; padding-bottom: 60px; }
+        .lotto-card {
+            background: white;
+            border-radius: 22px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+            animation: slideUp 0.6s ease-out forwards;
+            border: 1px solid #f0f0f0;
+        }
+
+        .balls { display: flex; justify-content: space-between; margin: 18px 0; }
+        .ball {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px; color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.1), 2px 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 화려한 파스텔 톤 로또 컬러 */
+        .n1 { background: #ffcc00; color: #444; }
+        .n11 { background: #56ccf2; }
+        .n21 { background: #ff7e5f; }
+        .n31 { background: #bdc3c7; }
+        .n41 { background: #66bb6a; }
+
+        .analysis-box {
+            background: #f9fbfc;
+            border-radius: 14px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #555;
+            border: 1px dashed #dce4ec;
+        }
+        .analysis-box b { color: #b8860b; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
+
     <div class="header">
-        <div class="app-icon">645</div>
-        <h1>로또645 분석기</h1>
-        <div class="creator-tag">제작: 노론리 한량</div>
+        <div class="app-icon-frame">645</div>
+        <h1>로또645 프로 분석기</h1>
+        <div class="creator-badge">제작: 노론리 한량</div>
     </div>
+
     <div class="status-panel">
-        <div class="status-item"><span>예측 회차</span><b id="drwNo">-</b></div>
-        <div class="status-item"><span>분석 엔진</span><b>통계 알고리즘</b></div>
-        <div class="status-item"><span>신뢰도</span><b>최상</b></div>
+        <div class="status-item"><span>분석 회차</span><b id="drwNo">-</b></div>
+        <div class="status-item"><span>확률 로직</span><b>Expert v3.0</b></div>
+        <div class="status-item"><span>AC 지수</span><b>정상 필터</b></div>
     </div>
-    <button class="btn-main" onclick="generate()">로또 번호 분석 시작</button>
+
+    <button class="btn-extract" onclick="generate()">프리미엄 번호 추출</button>
+
     <div id="results" class="results"></div>
+
     <script>
         function setInfo() {
             const start = new Date("2002-12-07T21:00:00");
@@ -53,37 +158,70 @@
             const weekDiff = Math.floor((now - start) / (1000 * 60 * 60 * 24 * 7));
             document.getElementById('drwNo').innerText = (weekDiff + 2) + "회";
         }
+
         function generate() {
             const container = document.getElementById('results');
             container.innerHTML = '';
+
             for(let i=0; i<5; i++) {
-                let nums = [];
-                while(nums.length < 6) {
-                    let n = Math.floor(Math.random() * 45) + 1;
-                    if(!nums.includes(n)) nums.push(n);
-                }
-                nums.sort((a, b) => a - b);
-                const sum = nums.reduce((a, b) => a + b, 0);
-                const odds = nums.filter(n => n % 2 !== 0).length;
-                const evens = 6 - odds;
-                let hasConsecutive = false;
-                for(let j=0; j<5; j++) { if(nums[j+1] - nums[j] === 1) hasConsecutive = true; }
+                let data = getFilteredNumbers();
+                
                 const card = document.createElement('div');
                 card.className = 'lotto-card';
-                card.style.animationDelay = (i * 0.1) + 's';
+                card.style.animationDelay = (i * 0.15) + 's';
+
                 let ballsHtml = '<div class="balls">';
-                nums.forEach(n => {
+                data.nums.forEach(n => {
                     let c = 'n1';
                     if(n > 10) c = 'n11'; if(n > 20) c = 'n21';
                     if(n > 30) c = 'n31'; if(n > 40) c = 'n41';
                     ballsHtml += `<div class="ball ${c}">${n}</div>`;
                 });
                 ballsHtml += '</div>';
-                const reason = `이 조합은 총합이 <b>${sum}</b>으로 당첨 확률이 높은 100~170 구간에 있으며, 홀짝 비율이 <b>${odds}:${evens}</b>로 매우 균형 잡힌 패턴입니다. ${hasConsecutive ? '연속 번호를 포함하여 실효성을 높였습니다.' : '번호를 고르게 분산하여 안정성을 더했습니다.'}`;
-                card.innerHTML = `<div style="font-size:13px; font-weight:700; color:var(--main-gold);">AI 분석 조합 ${i+1}</div>${ballsHtml}<div class="analysis-box">🔍 <b>추천 사유:</b><br>${reason}</div>`;
+
+                const reason = `총합 <b>${data.sum}</b>(심리적 안정권), 저고비율 <b>${data.lowCount}:${data.highCount}</b>, 소수 <b>${data.primeCount}개</b>를 포함한 전문가급 조합입니다. (AC지수: ${data.acValue})`;
+
+                card.innerHTML = `
+                    <div style="font-size:13px; font-weight:700; color:#b8860b;">PREMIUM COMBINATION ${i+1}</div>
+                    ${ballsHtml}
+                    <div class="analysis-box">
+                        ✨ <b>확률 분석 리포트:</b><br>${reason}
+                    </div>
+                `;
                 container.appendChild(card);
             }
-            if (window.navigator.vibrate) window.navigator.vibrate(50);
+            if (window.navigator.vibrate) window.navigator.vibrate(60);
+        }
+
+        function getFilteredNumbers() {
+            let attempts = 0;
+            const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43];
+            
+            while(attempts < 5000) {
+                attempts++;
+                let nums = [];
+                while(nums.length < 6) {
+                    let n = Math.floor(Math.random() * 45) + 1;
+                    if(!nums.includes(n)) nums.push(n);
+                }
+                nums.sort((a,b) => a-b);
+
+                const sum = nums.reduce((a,b) => a+b, 0);
+                const lowCount = nums.filter(n => n <= 22).length;
+                const primeCount = nums.filter(n => primes.includes(n)).length;
+
+                // AC 지수 계산
+                let diffs = new Set();
+                for(let i=0; i<5; i++) {
+                    for(let j=i+1; j<6; j++) diffs.add(nums[j]-nums[i]);
+                }
+                const acValue = diffs.size - 5;
+
+                // 필터링 기준 (확률 극대화)
+                if(sum >= 100 && sum <= 175 && lowCount >= 2 && lowCount <= 4 && primeCount >= 1 && primeCount <= 3 && acValue >= 7) {
+                    return { nums, sum, lowCount, highCount: 6-lowCount, primeCount, acValue };
+                }
+            }
         }
         setInfo();
     </script>
