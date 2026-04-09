@@ -39,33 +39,39 @@
         .btn:disabled { background: #ccc !important; opacity: 0.7; }
         body.matrix-mode .btn { background: var(--matrix-green); color: #000; box-shadow: 0 0 20px rgba(0,255,0,0.6); }
 
+        /* [핵심] 즉각 노출을 위한 매트릭스 설정 */
         #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none; background: #000; }
-        .matrix-code { position: absolute; color: var(--matrix-green); font-family: 'Courier New', monospace; font-size: 16px; white-space: nowrap; text-shadow: var(--matrix-glow); animation: matrix-fall infinite linear; opacity: 0; line-height: 1; }
+        .matrix-code { position: absolute; color: var(--matrix-green); font-family: 'Courier New', monospace; font-size: 16px; white-space: nowrap; text-shadow: var(--matrix-glow); animation: matrix-fall linear infinite; opacity: 1; line-height: 1; }
 
         @keyframes matrix-fall {
-            0% { top: -100%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
         }
 
-        .extracting-text { position: absolute; width: 100%; text-align: center; top: 50%; color: var(--matrix-green); font-weight: bold; font-size: 18px; z-index: 5; text-shadow: 0 0 10px var(--matrix-green); display: none; }
-        body.matrix-mode .extracting-text { display: block; }
+        #countdown-container {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 5; color: var(--matrix-green); pointer-events: none;
+        }
+        /* [수정] 요청하신 문구 적용 */
+        .extracting-text { font-weight: bold; font-size: 18px; text-shadow: 0 0 10px var(--matrix-green); margin-bottom: 20px; }
+        #countdown-number { font-size: 120px; font-weight: 900; text-shadow: 0 0 20px var(--matrix-green); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
 
         .results { width: 92%; padding-bottom: 50px; z-index: 10; position: relative; }
-        .card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border-left: 5px solid var(--gold); animation: fadeIn 0.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+        .card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border-left: 5px solid var(--gold); }
         .card-top { font-size: 12px; font-weight: bold; color: #b8860b; margin-bottom: 10px; display: flex; justify-content: space-between; }
         .balls { display: flex; justify-content: space-between; margin: 12px 0; }
         .ball { width: 38px; height: 38px; border-radius: 50%; line-height: 38px; text-align: center; font-weight: bold; font-size: 14px; color: #fff; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1); }
-        
         .c1 { background: #fbc400; color: #333; } .c2 { background: #69c8f2; } .c3 { background: #ff7272; } .c4 { background: #bdc3c7; } .c5 { background: #b0d840; }
 
         .report { background: #f9fbfc; border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 11px; color: #555; line-height: 1.6; border: 1px solid #eee; }
-        /* [수정] 강조 텍스트(b 태그)를 금색으로 유지하되, 리포트 본문 색상과 조화롭게 설정 */
         .report b { color: #b8860b; font-weight: bold; }
-        /* [수정] 저고 텍스트 부분의 불필요한 강조 제거를 위한 일반 스타일 */
         .report .plain { color: #555; font-weight: normal; }
     </style>
 </head>
@@ -86,7 +92,10 @@
     <button class="btn" id="extractBtn" onclick="start()">프리미엄 정밀 분석 시작</button>
 
     <div id="matrix-canvas">
-        <div class="extracting-text">데이터 스트림 분석 중...</div>
+        <div id="countdown-container">
+            <div class="extracting-text">데이터 스트림 분석 중...</div>
+            <div id="countdown-number"></div>
+        </div>
     </div>
 
     <div id="display" class="results"></div>
@@ -100,20 +109,27 @@
             document.getElementById('drwNo').innerText = (weeks + 2) + "회";
         }
 
+        // [수정] 딜레이 없이 즉각 쏟아지도록 함수 개편
         function createMatrixRain() {
             const canvas = document.getElementById('matrix-canvas');
+            canvas.innerHTML = '<div id="countdown-container"><div class="extracting-text">데이터 스트림 분석 중...</div><div id="countdown-number">5</div></div>';
+            
             const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%';
             const columns = Math.floor(window.innerWidth / 15);
-
+            
             for(let i=0; i<columns; i++) {
                 let code = document.createElement('div');
                 code.className = 'matrix-code';
-                let randomContent = '';
-                for(let j=0; j<30; j++) randomContent += characters[Math.floor(Math.random()*characters.length)] + '<br>';
-                code.innerHTML = randomContent;
+                let content = '';
+                for(let j=0; j<25; j++) content += characters[Math.floor(Math.random()*characters.length)] + '<br>';
+                code.innerHTML = content;
                 code.style.left = (i * (100 / columns)) + '%';
-                code.style.animationDelay = (Math.random() * 2) + 's';
-                code.style.animationDuration = (0.8 + Math.random() * 1.5) + 's';
+                
+                // 애니메이션 시작 지점을 랜덤하게 섞어 즉시 화면에 가득 차게 함
+                let duration = 0.5 + Math.random() * 1.5;
+                code.style.animationDuration = duration + 's';
+                code.style.animationDelay = -(Math.random() * duration) + 's'; 
+                
                 canvas.appendChild(code);
             }
         }
@@ -125,15 +141,30 @@
             const body = document.body;
 
             btn.disabled = true;
-            btn.innerText = "알고리즘 연산 중 (5초)...";
+            btn.innerText = "데이터 스트림 분석 중...";
             area.innerHTML = '';
-            body.classList.add('matrix-mode');
-            canvas.style.display = 'block';
             
-            document.querySelectorAll('.matrix-code').forEach(c => c.remove());
+            // 1. 즉시 폭포 생성 (딜레이 제거)
             createMatrixRain();
+            canvas.style.display = 'block';
+            body.classList.add('matrix-mode');
 
-            setTimeout(function() {
+            // 2. 카운트다운 숫자 제어
+            const countDisplay = document.getElementById('countdown-number');
+            let timeLeft = 5;
+            countDisplay.innerText = timeLeft;
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                if(timeLeft > 0) {
+                    countDisplay.innerText = timeLeft;
+                } else {
+                    clearInterval(timer);
+                    finishAnalysis();
+                }
+            }, 1000);
+
+            function finishAnalysis() {
                 body.classList.remove('matrix-mode');
                 canvas.style.display = 'none';
                 btn.disabled = false;
@@ -150,7 +181,6 @@
                     });
                     ballsHtml += '</div>';
 
-                    // [수정] "저고:" 텍스트 스타일을 일반 텍스트와 동일하게 조정
                     card.innerHTML = `
                         <div class="card-top"><span>Combination 0${i}</span><span style="color:#27ae60">AI PRECISION</span></div>
                         ${ballsHtml}
@@ -161,7 +191,7 @@
                         </div>`;
                     area.appendChild(card);
                 }
-            }, 5000);
+            }
         }
 
         function getPrecisionNums() {
@@ -174,24 +204,16 @@
                     if(!temp.includes(r)) temp.push(r);
                 }
                 temp.sort((a,b)=>a-b);
-
                 let s = 0, o = 0, low = 0;
-                temp.forEach(n => { 
-                    s += n; 
-                    if(n%2 !== 0) o++; 
-                    if(n <= 22) low++;
-                });
-
+                temp.forEach(n => { s += n; if(n%2 !== 0) o++; if(n <= 22) low++; });
                 let ds = [];
                 for(let a=0; a<5; a++) for(let b=a+1; b<6; b++) {
                     let d = temp[b] - temp[a];
                     if(!ds.includes(d)) ds.push(d);
                 }
                 let ac = ds.length - 5;
-
                 let con = 0;
                 for(let i=0; i<5; i++) if(temp[i+1]-temp[i] === 1) con++;
-
                 let ends = {};
                 let maxE = 0;
                 temp.forEach(n => { let e = n%10; ends[e] = (ends[e]||0)+1; maxE = Math.max(maxE, ends[e]); });
