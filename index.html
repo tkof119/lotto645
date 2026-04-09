@@ -3,56 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>로또645 프로 분석기</title>
+    <title>로또645 프로</title>
     
-    <link rel="icon" type="image/png" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="로또645 프로">
     <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/png" href="icon.png">
 
     <style>
-        :root { --gold: #d4af37; --gold-l: #f1c40f; }
-        body { font-family: sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
+        :root { --gold: #d4af37; --gold-l: #f1c40f; --matrix-green: #00ff00; --matrix-glow: 0 0 8px #00ff00; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; transition: background-color 0.5s; }
         
-        .header { width: 100%; padding: 40px 0 25px; text-align: center; background: white; border-bottom: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        body.matrix-mode { background-color: #000; overflow: hidden; height: 100vh; }
+
+        .header { width: 100%; padding: 50px 0 25px; text-align: center; background: white; border-bottom: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; position: relative; transition: 0.5s; }
+        body.matrix-mode .header { background: rgba(0,0,0,0.9); border-bottom: 3px solid var(--matrix-green); color: var(--matrix-green); }
         
-        /* 아이콘 표시 상자 */
-        .icon-box {
-            width: 75px; height: 75px;
-            margin: 0 auto 12px;
-            border-radius: 20px;
-            background-color: var(--gold-l); /* 이미지 로딩 전 기본색 */
-            background-image: url('icon.png');
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 5px 15px rgba(184, 134, 11, 0.2);
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-        }
+        .icon-box { width: 75px; height: 75px; margin: 0 auto 12px; border-radius: 20px; background-color: var(--gold-l); background-image: url('icon.png'); background-size: cover; background-position: center; box-shadow: 0 5px 15px rgba(184, 134, 11, 0.2); transition: 0.5s; }
+        body.matrix-mode .icon-box { background-color: #000; box-shadow: 0 0 15px var(--matrix-green); border: 2px solid var(--matrix-green); }
 
-        h1 { font-size: 22px; margin: 0; color: #b8860b; }
-        .tag { display: inline-block; margin-top: 8px; padding: 4px 12px; background: #b8860b; color: white; border-radius: 20px; font-size: 11px; }
+        h1 { font-size: 22px; margin: 0; color: #b8860b; transition: 0.5s; }
+        body.matrix-mode h1 { color: var(--matrix-green); text-shadow: var(--matrix-glow); }
+        .tag { display: inline-block; margin-top: 8px; padding: 4px 12px; background: #b8860b; color: white; border-radius: 20px; font-size: 11px; transition: 0.5s; }
+        body.matrix-mode .tag { background: var(--matrix-green); color: #000; font-weight: bold; }
 
-        .status { width: 90%; background: white; border-radius: 15px; padding: 15px; margin-top: -15px; display: flex; justify-content: space-around; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .status { width: 90%; background: white; border-radius: 15px; padding: 15px; margin-top: -15px; display: flex; justify-content: space-around; box-shadow: 0 10px 20px rgba(0,0,0,0.05); z-index: 10; position: relative; transition: 0.5s; }
+        body.matrix-mode .status { background: rgba(0,0,0,0.9); border: 1px solid var(--matrix-green); }
         .status div { text-align: center; }
         .status span { display: block; font-size: 10px; color: #888; }
-        .status b { font-size: 12px; letter-spacing: -0.5px; white-space: nowrap; }
+        .status b { font-size: 12px; letter-spacing: -0.5px; }
+        body.matrix-mode .status b { color: var(--matrix-green); text-shadow: var(--matrix-glow); }
 
-        .btn { width: 90%; padding: 18px; background: linear-gradient(to right, #b8860b, #f1c40f); border: none; border-radius: 15px; color: white; font-size: 17px; font-weight: bold; margin: 25px 0; cursor: pointer; }
+        .btn { width: 90%; padding: 18px; background: linear-gradient(to right, #b8860b, #f1c40f); border: none; border-radius: 15px; color: white; font-size: 17px; font-weight: bold; margin: 25px 0; cursor: pointer; transition: 0.3s; z-index: 10; position: relative; box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3); }
+        .btn:disabled { background: #ccc !important; opacity: 0.7; }
+        body.matrix-mode .btn { background: var(--matrix-green); color: #000; box-shadow: 0 0 20px rgba(0,255,0,0.6); }
 
-        .results { width: 92%; padding-bottom: 50px; }
-        .card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border-left: 5px solid var(--gold); position: relative; }
-        .card-top { font-size: 12px; font-weight: bold; color: #b8860b; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none; background: #000; }
+        .matrix-code { position: absolute; color: var(--matrix-green); font-family: 'Courier New', monospace; font-size: 16px; white-space: nowrap; text-shadow: var(--matrix-glow); animation: matrix-fall infinite linear; opacity: 0; line-height: 1; }
+
+        @keyframes matrix-fall {
+            0% { top: -100%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .extracting-text { position: absolute; width: 100%; text-align: center; top: 50%; color: var(--matrix-green); font-weight: bold; font-size: 18px; z-index: 5; text-shadow: 0 0 10px var(--matrix-green); display: none; }
+        body.matrix-mode .extracting-text { display: block; }
+
+        .results { width: 92%; padding-bottom: 50px; z-index: 10; position: relative; }
+        .card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border-left: 5px solid var(--gold); animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
+        .card-top { font-size: 12px; font-weight: bold; color: #b8860b; margin-bottom: 10px; display: flex; justify-content: space-between; }
         .balls { display: flex; justify-content: space-between; margin: 12px 0; }
         .ball { width: 38px; height: 38px; border-radius: 50%; line-height: 38px; text-align: center; font-weight: bold; font-size: 14px; color: #fff; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1); }
         
-        .c1 { background: #fbc400; color: #333; }
-        .c2 { background: #69c8f2; }
-        .c3 { background: #ff7272; }
-        .c4 { background: #bdc3c7; }
-        .c5 { background: #b0d840; }
+        .c1 { background: #fbc400; color: #333; } .c2 { background: #69c8f2; } .c3 { background: #ff7272; } .c4 { background: #bdc3c7; } .c5 { background: #b0d840; }
 
         .report { background: #f9fbfc; border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 11px; color: #555; line-height: 1.6; border: 1px solid #eee; }
-        .report b { color: #b8860b; }
+        /* [수정] 강조 텍스트(b 태그)를 금색으로 유지하되, 리포트 본문 색상과 조화롭게 설정 */
+        .report b { color: #b8860b; font-weight: bold; }
+        /* [수정] 저고 텍스트 부분의 불필요한 강조 제거를 위한 일반 스타일 */
+        .report .plain { color: #555; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -65,93 +79,131 @@
 
     <div class="status">
         <div><span>분석회차</span><b id="drwNo">-</b></div>
-        <div><span>확률로직</span><b>합계･홀짝･저고･AC지수</b></div>
-        <div><span>상태</span><b>최적화</b></div>
+        <div><span>확률로직</span><b>정밀 AI 필터링</b></div>
+        <div><span>상태</span><b>최적화 완료</b></div>
     </div>
 
-    <button class="btn" onclick="start()">프리미엄 5조합 추출</button>
+    <button class="btn" id="extractBtn" onclick="start()">프리미엄 정밀 분석 시작</button>
+
+    <div id="matrix-canvas">
+        <div class="extracting-text">데이터 스트림 분석 중...</div>
+    </div>
 
     <div id="display" class="results"></div>
 
     <script>
-        // 날짜 계산 로직을 최상단으로 분리
         function init() {
-            var sDate = new Date("2002-12-07T21:00:00");
-            var nDate = new Date();
-            var diff = nDate.getTime() - sDate.getTime();
-            var weeks = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
+            const sDate = new Date("2002-12-07T21:00:00");
+            const nDate = new Date();
+            const diff = nDate.getTime() - sDate.getTime();
+            const weeks = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
             document.getElementById('drwNo').innerText = (weeks + 2) + "회";
         }
 
+        function createMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%';
+            const columns = Math.floor(window.innerWidth / 15);
+
+            for(let i=0; i<columns; i++) {
+                let code = document.createElement('div');
+                code.className = 'matrix-code';
+                let randomContent = '';
+                for(let j=0; j<30; j++) randomContent += characters[Math.floor(Math.random()*characters.length)] + '<br>';
+                code.innerHTML = randomContent;
+                code.style.left = (i * (100 / columns)) + '%';
+                code.style.animationDelay = (Math.random() * 2) + 's';
+                code.style.animationDuration = (0.8 + Math.random() * 1.5) + 's';
+                canvas.appendChild(code);
+            }
+        }
+
         function start() {
-            var area = document.getElementById('display');
-            area.innerHTML = '<div style="text-align:center; padding:30px; color:#b8860b;">프리미엄 알고리즘 분석 중...</div>';
+            const btn = document.getElementById('extractBtn');
+            const area = document.getElementById('display');
+            const canvas = document.getElementById('matrix-canvas');
+            const body = document.body;
+
+            btn.disabled = true;
+            btn.innerText = "알고리즘 연산 중 (5초)...";
+            area.innerHTML = '';
+            body.classList.add('matrix-mode');
+            canvas.style.display = 'block';
             
+            document.querySelectorAll('.matrix-code').forEach(c => c.remove());
+            createMatrixRain();
+
             setTimeout(function() {
-                area.innerHTML = '';
-                for(var i=1; i<=5; i++) {
-                    var data = getNums();
-                    var card = document.createElement('div');
+                body.classList.remove('matrix-mode');
+                canvas.style.display = 'none';
+                btn.disabled = false;
+                btn.innerText = "프리미엄 정밀 분석 시작";
+
+                for(let i=1; i<=5; i++) {
+                    let data = getPrecisionNums();
+                    let card = document.createElement('div');
                     card.className = 'card';
-                    
-                    var balls = '<div class="balls">';
-                    for(var j=0; j<6; j++) {
-                        var n = data.nums[j];
-                        var cl = (n<=10)?'c1':(n<=20)?'c2':(n<=30)?'c3':(n<=40)?'c4':'c5';
-                        balls += '<div class="ball '+cl+'">'+n+'</div>';
-                    }
-                    balls += '</div>';
+                    let ballsHtml = '<div class="balls">';
+                    data.nums.forEach(n => {
+                        let cl = (n<=10)?'c1':(n<=20)?'c2':(n<=30)?'c3':(n<=40)?'c4':'c5';
+                        ballsHtml += `<div class="ball ${cl}">${n}</div>`;
+                    });
+                    ballsHtml += '</div>';
 
-                    var comboTitle = 'Combination ' + (i < 10 ? '0' + i : i);
-
-                    card.innerHTML = '<div class="card-top"><span>' + comboTitle + '</span><span style="color:#27ae60">PREMIUM</span></div>' + 
-                                     balls + 
-                                     '<div class="report">🔍 <b>확률 리포트:</b><br>' +
-                                     '총합: <b>' + data.sum + '</b> | ' +
-                                     '홀짝: <b>' + data.odd + ':' + (6-data.odd) + '</b> | ' +
-                                     '저고: <b>' + data.low + ':' + (6-data.low) + '</b> | ' +
-                                     'AC지수: <b>' + data.ac + '</b><br>' +
-                                     '선별된 로직에 따라 분석이 완료된 조합입니다.</div>';
+                    // [수정] "저고:" 텍스트 스타일을 일반 텍스트와 동일하게 조정
+                    card.innerHTML = `
+                        <div class="card-top"><span>Combination 0${i}</span><span style="color:#27ae60">AI PRECISION</span></div>
+                        ${ballsHtml}
+                        <div class="report">
+                            🔍 <b>정밀 리포트:</b><br>
+                            총합: <b>${data.sum}</b> | AC지수: <b>${data.ac}</b> | 홀짝: <b>${data.odd}:${6-data.odd}</b> | <span class="plain">저고:</span> <b>${data.low}:${6-data.low}</b><br>
+                            패턴: <b>연번(${data.con})</b>, <b>동끝수(${data.maxEnd})</b> 분석 통과. 최적 조합 판정.
+                        </div>`;
                     area.appendChild(card);
                 }
-            }, 400);
+            }, 5000);
         }
 
-        function getNums() {
-            var limit = 0;
-            while(limit < 20000) {
+        function getPrecisionNums() {
+            let limit = 0;
+            while(limit < 50000) {
                 limit++;
-                var temp = [];
+                let temp = [];
                 while(temp.length < 6) {
-                    var r = Math.floor(Math.random() * 45) + 1;
-                    if(temp.indexOf(r) === -1) temp.push(r);
+                    let r = Math.floor(Math.random() * 45) + 1;
+                    if(!temp.includes(r)) temp.push(r);
                 }
-                temp.sort(function(a,b){return a-b;});
+                temp.sort((a,b)=>a-b);
 
-                var s = 0, o = 0, l = 0;
-                for(var k=0; k<6; k++) {
-                    s += temp[k];
-                    if(temp[k] % 2 !== 0) o++;
-                    if(temp[k] <= 22) l++;
+                let s = 0, o = 0, low = 0;
+                temp.forEach(n => { 
+                    s += n; 
+                    if(n%2 !== 0) o++; 
+                    if(n <= 22) low++;
+                });
+
+                let ds = [];
+                for(let a=0; a<5; a++) for(let b=a+1; b<6; b++) {
+                    let d = temp[b] - temp[a];
+                    if(!ds.includes(d)) ds.push(d);
                 }
+                let ac = ds.length - 5;
 
-                var ds = [];
-                for(var a=0; a<5; a++) {
-                    for(var b=a+1; b<6; b++) {
-                        var d = temp[b] - temp[a];
-                        if(ds.indexOf(d) === -1) ds.push(d);
-                    }
-                }
-                var ac = ds.length - 5;
+                let con = 0;
+                for(let i=0; i<5; i++) if(temp[i+1]-temp[i] === 1) con++;
 
-                if(s >= 110 && s <= 175 && o >= 2 && o <= 4 && l >= 2 && l <= 4 && ac >= 7) {
-                    return {nums: temp, sum: s, odd: o, low: l, ac: ac};
+                let ends = {};
+                let maxE = 0;
+                temp.forEach(n => { let e = n%10; ends[e] = (ends[e]||0)+1; maxE = Math.max(maxE, ends[e]); });
+
+                if(s >= 110 && s <= 180 && o >= 2 && o <= 4 && low >= 2 && low <= 4 && ac >= 7 && con <= 1 && maxE <= 2) {
+                    return {nums: temp, sum: s, odd: o, low: low, ac: ac, con: con, maxEnd: maxE};
                 }
             }
-            return {nums: [1,11,21,31,41,44], sum: 149, odd: 3, low: 3, ac: 9};
+            return {nums: [5, 12, 23, 31, 38, 44], sum: 153, odd: 2, low: 2, ac: 9, con: 0, maxEnd: 1};
         }
         
-        window.onload = init; // 페이지 로드 후 실행
+        window.onload = init;
     </script>
 </body>
 </html>
