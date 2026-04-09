@@ -5,19 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>로또645 프로 분석기</title>
     
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+
     <style>
         :root { --gold: #d4af37; --gold-l: #f1c40f; }
         body { font-family: sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
         
         .header { width: 100%; padding: 40px 0 25px; text-align: center; background: white; border-bottom: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .icon { width: 70px; height: 70px; background: linear-gradient(135deg, #fff, var(--gold-l)); border-radius: 20px; margin: 0 auto 10px; line-height: 70px; font-size: 28px; font-weight: bold; color: #b8860b; box-shadow: 0 5px 15px rgba(184, 134, 11, 0.2); }
+        
+        /* 아이콘 표시 상자 */
+        .icon-box {
+            width: 75px; height: 75px;
+            margin: 0 auto 12px;
+            border-radius: 20px;
+            background-color: var(--gold-l); /* 이미지 로딩 전 기본색 */
+            background-image: url('icon.png');
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 5px 15px rgba(184, 134, 11, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
         h1 { font-size: 22px; margin: 0; color: #b8860b; }
         .tag { display: inline-block; margin-top: 8px; padding: 4px 12px; background: #b8860b; color: white; border-radius: 20px; font-size: 11px; }
 
         .status { width: 90%; background: white; border-radius: 15px; padding: 15px; margin-top: -15px; display: flex; justify-content: space-around; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .status div { text-align: center; }
         .status span { display: block; font-size: 10px; color: #888; }
-        .status b { font-size: 12px; letter-spacing: -0.5px; }
+        .status b { font-size: 12px; letter-spacing: -0.5px; white-space: nowrap; }
 
         .btn { width: 90%; padding: 18px; background: linear-gradient(to right, #b8860b, #f1c40f); border: none; border-radius: 15px; color: white; font-size: 17px; font-weight: bold; margin: 25px 0; cursor: pointer; }
 
@@ -26,7 +43,7 @@
         .card-top { font-size: 12px; font-weight: bold; color: #b8860b; margin-bottom: 10px; display: flex; justify-content: space-between; }
         
         .balls { display: flex; justify-content: space-between; margin: 12px 0; }
-        .ball { width: 40px; height: 40px; border-radius: 50%; line-height: 40px; text-align: center; font-weight: bold; font-size: 15px; color: #fff; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1); }
+        .ball { width: 38px; height: 38px; border-radius: 50%; line-height: 38px; text-align: center; font-weight: bold; font-size: 14px; color: #fff; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1); }
         
         .c1 { background: #fbc400; color: #333; }
         .c2 { background: #69c8f2; }
@@ -41,7 +58,7 @@
 <body>
 
     <div class="header">
-        <div class="icon">645</div>
+        <div class="icon-box"></div>
         <h1>로또645 프로 분석기</h1>
         <div class="tag">제작: 노론리 한량</div>
     </div>
@@ -57,12 +74,17 @@
     <div id="display" class="results"></div>
 
     <script>
-        const sDate = new Date("2002-12-07T21:00:00");
-        const nDate = new Date();
-        document.getElementById('drwNo').innerText = (Math.floor((nDate - sDate) / (1000*60*60*24*7)) + 2) + "회";
+        // 날짜 계산 로직을 최상단으로 분리
+        function init() {
+            var sDate = new Date("2002-12-07T21:00:00");
+            var nDate = new Date();
+            var diff = nDate.getTime() - sDate.getTime();
+            var weeks = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
+            document.getElementById('drwNo').innerText = (weeks + 2) + "회";
+        }
 
         function start() {
-            const area = document.getElementById('display');
+            var area = document.getElementById('display');
             area.innerHTML = '<div style="text-align:center; padding:30px; color:#b8860b;">프리미엄 알고리즘 분석 중...</div>';
             
             setTimeout(function() {
@@ -75,12 +97,11 @@
                     var balls = '<div class="balls">';
                     for(var j=0; j<6; j++) {
                         var n = data.nums[j];
-                        var c = (n<=10)?'c1':(n<=20)?'c2':(n<=30)?'c3':(n<=40)?'c4':'c5';
-                        balls += '<div class="ball '+c+'">'+n+'</div>';
+                        var cl = (n<=10)?'c1':(n<=20)?'c2':(n<=30)?'c3':(n<=40)?'c4':'c5';
+                        balls += '<div class="ball '+cl+'">'+n+'</div>';
                     }
                     balls += '</div>';
 
-                    // 조합 명칭을 Combination 01 형식으로 변경
                     var comboTitle = 'Combination ' + (i < 10 ? '0' + i : i);
 
                     card.innerHTML = '<div class="card-top"><span>' + comboTitle + '</span><span style="color:#27ae60">PREMIUM</span></div>' + 
@@ -97,38 +118,40 @@
         }
 
         function getNums() {
-            var count = 0;
-            while(count < 25000) {
-                count++;
-                var res = [];
-                while(res.length < 6) {
+            var limit = 0;
+            while(limit < 20000) {
+                limit++;
+                var temp = [];
+                while(temp.length < 6) {
                     var r = Math.floor(Math.random() * 45) + 1;
-                    if(res.indexOf(r) === -1) res.push(r);
+                    if(temp.indexOf(r) === -1) temp.push(r);
                 }
-                res.sort(function(a,b){return a-b;});
+                temp.sort(function(a,b){return a-b;});
 
-                var sum = 0, odd = 0, low = 0;
+                var s = 0, o = 0, l = 0;
                 for(var k=0; k<6; k++) {
-                    sum += res[k];
-                    if(res[k] % 2 !== 0) odd++;
-                    if(res[k] <= 22) low++;
+                    s += temp[k];
+                    if(temp[k] % 2 !== 0) o++;
+                    if(temp[k] <= 22) l++;
                 }
 
-                var diffs = [];
+                var ds = [];
                 for(var a=0; a<5; a++) {
                     for(var b=a+1; b<6; b++) {
-                        var d = res[b] - res[a];
-                        if(diffs.indexOf(d) === -1) diffs.push(d);
+                        var d = temp[b] - temp[a];
+                        if(ds.indexOf(d) === -1) ds.push(d);
                     }
                 }
-                var ac = diffs.length - 5;
+                var ac = ds.length - 5;
 
-                if(sum >= 110 && sum <= 175 && odd >= 2 && odd <= 4 && low >= 2 && low <= 4 && ac >= 7) {
-                    return {nums: res, sum: sum, odd: odd, low: low, ac: ac};
+                if(s >= 110 && s <= 175 && o >= 2 && o <= 4 && l >= 2 && l <= 4 && ac >= 7) {
+                    return {nums: temp, sum: s, odd: o, low: l, ac: ac};
                 }
             }
-            return {nums: [1, 11, 21, 31, 41, 44], sum: 149, odd: 3, low: 3, ac: 9};
+            return {nums: [1,11,21,31,41,44], sum: 149, odd: 3, low: 3, ac: 9};
         }
+        
+        window.onload = init; // 페이지 로드 후 실행
     </script>
 </body>
 </html>
