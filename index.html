@@ -3,227 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>노론한량645 - AI 분석기</title>
+    <title>로또645 프로 분석기</title>
     
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
-
     <style>
-        :root {
-            --primary-gold: #c5a059;
-            --bright-bg: #fdfdfd;
-            --glass-card: rgba(255, 255, 255, 0.9);
-            --accent-color: #3498db;
-        }
-
-        body {
-            font-family: 'Pretendard', -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #2c3e50;
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh;
-        }
-
-        /* 화려한 화이트-골드 헤더 */
-        .header {
-            width: 100%;
-            padding: 50px 0 30px;
-            text-align: center;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-bottom: 2px solid var(--primary-gold);
-        }
-
-        .app-icon-frame {
-            width: 85px; height: 85px;
-            background: linear-gradient(135deg, #fff, #f1c40f);
-            border-radius: 22px;
-            margin: 0 auto 15px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; font-weight: 900; color: #b8860b;
-            box-shadow: 0 10px 25px rgba(184, 134, 11, 0.2);
-            border: 2px solid #fff;
-        }
-
-        h1 { font-size: 26px; margin: 0; color: #b8860b; letter-spacing: 1px; }
+        :root { --gold: #d4af37; --gold-l: #f1c40f; }
+        body { font-family: sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
         
-        /* 만든이 표기: 메인페이지 상단만 노출 */
-        .creator-badge {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 5px 15px;
-            background: #b8860b;
-            color: white;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(184, 134, 11, 0.3);
-        }
+        .header { width: 100%; padding: 40px 0 25px; text-align: center; background: white; border-bottom: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .icon { width: 70px; height: 70px; background: linear-gradient(135deg, #fff, var(--gold-l)); border-radius: 20px; margin: 0 auto 10px; line-height: 70px; font-size: 28px; font-weight: bold; color: #b8860b; box-shadow: 0 5px 15px rgba(184, 134, 11, 0.2); }
+        h1 { font-size: 22px; margin: 0; color: #b8860b; }
+        .tag { display: inline-block; margin-top: 8px; padding: 4px 12px; background: #b8860b; color: white; border-radius: 20px; font-size: 11px; }
 
-        .status-panel {
-            width: 90%;
-            background: var(--glass-card);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 18px;
-            margin-top: -20px;
-            display: flex; justify-content: space-around;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        .status-item span { display: block; font-size: 11px; color: #7f8c8d; margin-bottom: 4px; }
-        .status-item b { font-size: 15px; color: #2c3e50; }
+        .status { width: 90%; background: white; border-radius: 15px; padding: 15px; margin-top: -15px; display: flex; justify-content: space-around; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .status div { text-align: center; }
+        .status span { display: block; font-size: 10px; color: #888; }
+        .status b { font-size: 12px; letter-spacing: -0.5px; }
 
-        .btn-extract {
-            width: 90%; padding: 20px;
-            background: linear-gradient(to right, #b8860b, #f1c40f);
-            border: none; border-radius: 18px;
-            color: white; font-size: 18px; font-weight: 800;
-            margin: 30px 0; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(184, 134, 11, 0.3);
-            transition: 0.3s;
-        }
-        .btn-extract:active { transform: scale(0.96); }
+        .btn { width: 90%; padding: 18px; background: linear-gradient(to right, #b8860b, #f1c40f); border: none; border-radius: 15px; color: white; font-size: 17px; font-weight: bold; margin: 25px 0; cursor: pointer; }
 
-        .results { width: 90%; padding-bottom: 60px; }
-        .lotto-card {
-            background: white;
-            border-radius: 22px;
-            padding: 22px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
-            animation: slideUp 0.6s ease-out forwards;
-            border: 1px solid #f0f0f0;
-        }
+        .results { width: 92%; padding-bottom: 50px; }
+        .card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border-left: 5px solid var(--gold); position: relative; }
+        .card-top { font-size: 12px; font-weight: bold; color: #b8860b; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        
+        .balls { display: flex; justify-content: space-between; margin: 12px 0; }
+        .ball { width: 40px; height: 40px; border-radius: 50%; line-height: 40px; text-align: center; font-weight: bold; font-size: 15px; color: #fff; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1); }
+        
+        .c1 { background: #fbc400; color: #333; }
+        .c2 { background: #69c8f2; }
+        .c3 { background: #ff7272; }
+        .c4 { background: #bdc3c7; }
+        .c5 { background: #b0d840; }
 
-        .balls { display: flex; justify-content: space-between; margin: 18px 0; }
-        .ball {
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 16px; color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.1), 2px 4px 8px rgba(0,0,0,0.1);
-        }
-
-        /* 화려한 파스텔 톤 로또 컬러 */
-        .n1 { background: #ffcc00; color: #444; }
-        .n11 { background: #56ccf2; }
-        .n21 { background: #ff7e5f; }
-        .n31 { background: #bdc3c7; }
-        .n41 { background: #66bb6a; }
-
-        .analysis-box {
-            background: #f9fbfc;
-            border-radius: 14px;
-            padding: 15px;
-            margin-top: 10px;
-            font-size: 12.5px;
-            line-height: 1.6;
-            color: #555;
-            border: 1px dashed #dce4ec;
-        }
-        .analysis-box b { color: #b8860b; }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .report { background: #f9fbfc; border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 11px; color: #555; line-height: 1.6; border: 1px solid #eee; }
+        .report b { color: #b8860b; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="app-icon-frame">645</div>
+        <div class="icon">645</div>
         <h1>로또645 프로 분석기</h1>
-        <div class="creator-badge">제작: 노론리 한량</div>
+        <div class="tag">제작: 노론리 한량</div>
     </div>
 
-    <div class="status-panel">
-        <div class="status-item"><span>분석 회차</span><b id="drwNo">-</b></div>
-        <div class="status-item"><span>확률 로직</span><b>Expert v3.0</b></div>
-        <div class="status-item"><span>AC 지수</span><b>정상 필터</b></div>
+    <div class="status">
+        <div><span>분석회차</span><b id="drwNo">-</b></div>
+        <div><span>확률로직</span><b>합계･홀짝･저고･AC지수</b></div>
+        <div><span>상태</span><b>최적화</b></div>
     </div>
 
-    <button class="btn-extract" onclick="generate()">프리미엄 번호 추출</button>
+    <button class="btn" onclick="start()">프리미엄 5조합 추출</button>
 
-    <div id="results" class="results"></div>
+    <div id="display" class="results"></div>
 
     <script>
-        function setInfo() {
-            const start = new Date("2002-12-07T21:00:00");
-            const now = new Date();
-            const weekDiff = Math.floor((now - start) / (1000 * 60 * 60 * 24 * 7));
-            document.getElementById('drwNo').innerText = (weekDiff + 2) + "회";
-        }
+        const sDate = new Date("2002-12-07T21:00:00");
+        const nDate = new Date();
+        document.getElementById('drwNo').innerText = (Math.floor((nDate - sDate) / (1000*60*60*24*7)) + 2) + "회";
 
-        function generate() {
-            const container = document.getElementById('results');
-            container.innerHTML = '';
-
-            for(let i=0; i<5; i++) {
-                let data = getFilteredNumbers();
-                
-                const card = document.createElement('div');
-                card.className = 'lotto-card';
-                card.style.animationDelay = (i * 0.15) + 's';
-
-                let ballsHtml = '<div class="balls">';
-                data.nums.forEach(n => {
-                    let c = 'n1';
-                    if(n > 10) c = 'n11'; if(n > 20) c = 'n21';
-                    if(n > 30) c = 'n31'; if(n > 40) c = 'n41';
-                    ballsHtml += `<div class="ball ${c}">${n}</div>`;
-                });
-                ballsHtml += '</div>';
-
-                const reason = `총합 <b>${data.sum}</b>(심리적 안정권), 저고비율 <b>${data.lowCount}:${data.highCount}</b>, 소수 <b>${data.primeCount}개</b>를 포함한 전문가급 조합입니다. (AC지수: ${data.acValue})`;
-
-                card.innerHTML = `
-                    <div style="font-size:13px; font-weight:700; color:#b8860b;">PREMIUM COMBINATION ${i+1}</div>
-                    ${ballsHtml}
-                    <div class="analysis-box">
-                        ✨ <b>확률 분석 리포트:</b><br>${reason}
-                    </div>
-                `;
-                container.appendChild(card);
-            }
-            if (window.navigator.vibrate) window.navigator.vibrate(60);
-        }
-
-        function getFilteredNumbers() {
-            let attempts = 0;
-            const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43];
+        function start() {
+            const area = document.getElementById('display');
+            area.innerHTML = '<div style="text-align:center; padding:30px; color:#b8860b;">프리미엄 알고리즘 분석 중...</div>';
             
-            while(attempts < 5000) {
-                attempts++;
-                let nums = [];
-                while(nums.length < 6) {
-                    let n = Math.floor(Math.random() * 45) + 1;
-                    if(!nums.includes(n)) nums.push(n);
+            setTimeout(function() {
+                area.innerHTML = '';
+                for(var i=1; i<=5; i++) {
+                    var data = getNums();
+                    var card = document.createElement('div');
+                    card.className = 'card';
+                    
+                    var balls = '<div class="balls">';
+                    for(var j=0; j<6; j++) {
+                        var n = data.nums[j];
+                        var c = (n<=10)?'c1':(n<=20)?'c2':(n<=30)?'c3':(n<=40)?'c4':'c5';
+                        balls += '<div class="ball '+c+'">'+n+'</div>';
+                    }
+                    balls += '</div>';
+
+                    // 조합 명칭을 Combination 01 형식으로 변경
+                    var comboTitle = 'Combination ' + (i < 10 ? '0' + i : i);
+
+                    card.innerHTML = '<div class="card-top"><span>' + comboTitle + '</span><span style="color:#27ae60">PREMIUM</span></div>' + 
+                                     balls + 
+                                     '<div class="report">🔍 <b>확률 리포트:</b><br>' +
+                                     '총합: <b>' + data.sum + '</b> | ' +
+                                     '홀짝: <b>' + data.odd + ':' + (6-data.odd) + '</b> | ' +
+                                     '저고: <b>' + data.low + ':' + (6-data.low) + '</b> | ' +
+                                     'AC지수: <b>' + data.ac + '</b><br>' +
+                                     '선별된 로직에 따라 분석이 완료된 조합입니다.</div>';
+                    area.appendChild(card);
                 }
-                nums.sort((a,b) => a-b);
+            }, 400);
+        }
 
-                const sum = nums.reduce((a,b) => a+b, 0);
-                const lowCount = nums.filter(n => n <= 22).length;
-                const primeCount = nums.filter(n => primes.includes(n)).length;
-
-                // AC 지수 계산
-                let diffs = new Set();
-                for(let i=0; i<5; i++) {
-                    for(let j=i+1; j<6; j++) diffs.add(nums[j]-nums[i]);
+        function getNums() {
+            var count = 0;
+            while(count < 25000) {
+                count++;
+                var res = [];
+                while(res.length < 6) {
+                    var r = Math.floor(Math.random() * 45) + 1;
+                    if(res.indexOf(r) === -1) res.push(r);
                 }
-                const acValue = diffs.size - 5;
+                res.sort(function(a,b){return a-b;});
 
-                // 필터링 기준 (확률 극대화)
-                if(sum >= 100 && sum <= 175 && lowCount >= 2 && lowCount <= 4 && primeCount >= 1 && primeCount <= 3 && acValue >= 7) {
-                    return { nums, sum, lowCount, highCount: 6-lowCount, primeCount, acValue };
+                var sum = 0, odd = 0, low = 0;
+                for(var k=0; k<6; k++) {
+                    sum += res[k];
+                    if(res[k] % 2 !== 0) odd++;
+                    if(res[k] <= 22) low++;
+                }
+
+                var diffs = [];
+                for(var a=0; a<5; a++) {
+                    for(var b=a+1; b<6; b++) {
+                        var d = res[b] - res[a];
+                        if(diffs.indexOf(d) === -1) diffs.push(d);
+                    }
+                }
+                var ac = diffs.length - 5;
+
+                if(sum >= 110 && sum <= 175 && odd >= 2 && odd <= 4 && low >= 2 && low <= 4 && ac >= 7) {
+                    return {nums: res, sum: sum, odd: odd, low: low, ac: ac};
                 }
             }
+            return {nums: [1, 11, 21, 31, 41, 44], sum: 149, odd: 3, low: 3, ac: 9};
         }
-        setInfo();
     </script>
 </body>
 </html>
